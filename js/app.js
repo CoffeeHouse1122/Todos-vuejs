@@ -2,7 +2,7 @@
 	'use strict';
 
 	// Your starting point. Enjoy the ride!
-	const todos = JSON.parse(window.localStorage.getItem("todos"));
+	const todos = JSON.parse(window.localStorage.getItem("todos")) || [];
 	const app = new Vue({
 		el: "#todoapp",
 		data: {
@@ -119,6 +119,9 @@
 		//修改实例中的属性hash从而解决
 		app.hash = hash;
 		switch (hash) {
+			case "":
+				app.filterTodos = app.todos;
+				break;
 			case "#/" :
 				app.filterTodos = app.todos;
 				break;
