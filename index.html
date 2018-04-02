@@ -1,0 +1,129 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<title>Template • TodoMVC</title>
+	<link rel="stylesheet" href="node_modules/todomvc-common/base.css">
+	<link rel="stylesheet" href="node_modules/todomvc-app-css/index.css">
+	<!-- CSS overrides - remove if you don't need it -->
+	<link rel="stylesheet" href="css/app.css">
+</head>
+
+<body>
+	<section class="todoapp" id="todoapp">
+		<header class="header">
+			<h1>todos</h1>
+			<!-- 事件绑定 如果没有参数 则事件处理函数默认接收一个事件源对象参数 如果绑定的时候调用传参 则以传递的参数为准  如果想得到的事件对象 则调用$event -->
+			<input class="new-todo" 
+			placeholder="What needs to be done?" 
+			autofocus
+			v-on:keyup.enter="addTodo"
+			v-model = "inputText">
+		</header>
+		<!-- vue 提供了一个特殊标签 <template> 该标签可以和v-if结合使用，渲染结果不会包含该标签-->
+		<template  v-if="todos.length">
+			<!-- This section should be hidden by default and shown when there are todos -->
+			<section class="main">
+				<!-- 标记所有任务为完成/未完成状态 -->
+				<input
+				 id="toggle-all"
+				 class="toggle-all"
+				 type="checkbox"
+				 v-model="toggleAllStat">
+				<label for="toggle-all">Mark all as complete</label>
+				<ul class="todo-list">
+					<!-- These are here just to show the structure of the list items -->
+					<!-- List items should get the class `editing` when editing and `completed` when marked as completed -->
+					<!-- <li class="editing" v-for="item in todos">
+						<div class="view">
+							<input class="toggle" type="checkbox" checked>
+							<label>{{ item.title }}</label>
+							<button class="destroy"></button>
+						</div>
+						<input class="edit" v-model="item.title">
+					</li> -->
+					<li
+					 v-for="(item,index) in filterTodos"
+					 v-bind:class="{
+						 completed:item.done,
+						 editing:item === currentEdit
+						}">
+						<div class="view" > 
+							<input 
+							 class="toggle" 
+							 type="checkbox"
+							 v-model="item.done" >
+							<label
+							 v-on:dblclick="getEditing(item)">{{ item.title }}</label>
+							<button
+							 class="destroy"
+							 v-on:click="removeTodo(index)"
+							 ></button>
+						</div>
+						<input class="edit"
+						 v-model="item.title"
+						 v-on:keyup.enter="saveEdit(item,index)"
+						 v-on:blur="saveEdit(item,index)"
+						 v-on:keyup.esc="cancelEdit">
+					</li>
+				</ul>
+			</section>
+			<!-- This footer should hidden by default and shown when there are todos -->
+			<footer class="footer">
+				<!-- This should be `0 items left` by default -->
+				<span class="todo-count">
+					<!-- 未完成任务数 -->
+					<strong>{{ remaining }}</strong> item left</span>
+				<!-- Remove this if you don't implement routing -->
+				<!-- 
+					数据过滤
+					http://hostname主机名：port端口号/path路径#hash
+					# 术语 hash
+					1.监听window的onhashchange 事件 绑定事件处理函数
+					2.获取当前的hash锚点
+					3.根据hash的变化筛选数据
+				 -->
+				<ul class="filters">
+					<li>
+						<a :class="{selected:hash === '#/'}" href="#/">All</a>
+					</li>
+					<li>
+						<a :class="{selected:hash === '#/active'}" href="#/active">Active</a>
+					</li>
+					<li>
+						<a :class="{selected:hash === '#/completed'}" href="#/completed">Completed</a>
+					</li>
+				</ul>
+				<!-- Hidden if no completed items are left ↓ -->
+				<!-- 清除所有已完成任务项
+					1.注册点击事件处理函数
+					2.找到所有已完成任务项 -->
+				<button
+				 class="clear-completed"
+				 v-on:click="clearAllDone">Clear completed</button>
+			</footer>
+		</template>
+	</section>
+	<footer class="info">
+		<p>Double-click to edit a todo</p>
+		<!-- Remove the below line ↓ -->
+		<p>Template by
+			<a href="http://sindresorhus.com">Sindre Sorhus</a>
+		</p>
+		<!-- Change this out with your name and url ↓ -->
+		<p>Created by
+			<a href="http://todomvc.com">you</a>
+		</p>
+		<p>Part of
+			<a href="http://todomvc.com">TodoMVC</a>
+		</p>
+	</footer>
+	<!-- Scripts here. Don't remove ↓ -->
+	<!-- <script src="node_modules/todomvc-common/base.js"></script> -->
+	<script src="node_modules/vue/dist/vue.js"></script>
+	<script src="js/app.js"></script>
+</body>
+
+</html>
