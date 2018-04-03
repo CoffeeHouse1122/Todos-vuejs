@@ -3,6 +3,15 @@
 
 	// Your starting point. Enjoy the ride!
 	const todos = JSON.parse(window.localStorage.getItem("todos")) || [];
+
+	// 注册一个全局自定义指令 'v-focus'
+	// Vue操作DOM的推荐方式
+	Vue.directive('focus',{
+		inserted:function(el){
+			el.focus();
+		}
+	})
+
 	const app = new Vue({
 		el: "#todoapp",
 		data: {
@@ -30,8 +39,19 @@
 			},
 
 			//删除
-			removeTodo(index) {
-				this.todos.splice(index, 1);
+			removeTodo(item) {
+				//根据item.id找到元素的索引
+				//根据索引删除
+				// es6 新增的一个数组方法 findIndex
+				// findIndex 会遍历数组，对数组的每一项调用你传递的回调函数
+				// 当某个元素满足 条件时 停止遍历 返回改元素项在数组中索引
+				// 如果遍历结束没有找到 返回索引 -1
+				const index = this.todos.findIndex(function (t) {
+					return t.id === item.id;
+				})
+				if (index !== -1 ){
+					this.todos.splice(index, 1);
+				}
 
 			},
 
@@ -89,6 +109,7 @@
 						item.done = val;
 
 					})
+					
 
 				}
 
@@ -105,8 +126,26 @@
 				handler: function () {
 					//todos发生变化同步到本地存储
 					window.localStorage.setItem("todos", JSON.stringify(this.todos));
+					window.onhashchange();					
 				},
 				deep: true //默认只监视对象或者数组的一层数据，如果需要无级后代监视，需配置为true
+			}
+		},
+
+		directives:{
+			//对象的key就是自定义指令的名字
+			// 选项对象用来配置指令的声明周期钩子函数
+			"todo-focus":{
+				// bind(el,binding){},
+				// inserted(el,binding){},
+				update(el,binding){
+					if(binding.value === true){
+						el.focus()
+					}
+				}
+				// componentUpdated(el,binding){},
+				// unbind(el,binding){}
+
 			}
 		}
 	})

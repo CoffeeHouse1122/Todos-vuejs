@@ -18,7 +18,7 @@
 			<!-- 事件绑定 如果没有参数 则事件处理函数默认接收一个事件源对象参数 如果绑定的时候调用传参 则以传递的参数为准  如果想得到的事件对象 则调用$event -->
 			<input class="new-todo" 
 			placeholder="What needs to be done?" 
-			autofocus
+			v-focus
 			v-on:keyup.enter="addTodo"
 			v-model = "inputText">
 		</header>
@@ -59,10 +59,11 @@
 							 v-on:dblclick="getEditing(item)">{{ item.title }}</label>
 							<button
 							 class="destroy"
-							 v-on:click="removeTodo(index)"
+							 v-on:click="removeTodo(item)"
 							 ></button>
 						</div>
 						<input class="edit"
+						 v-todo-focus="currentEdit === item"
 						 v-model="item.title"
 						 v-on:keyup.enter="saveEdit(item,index)"
 						 v-on:blur="saveEdit(item,index)"
